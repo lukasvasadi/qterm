@@ -1,0 +1,23 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
+        <file alias="style">../view/styles/Style.qml</file>
+        <file alias="appstates.js">../view/logic/appstates.js</file>
+        <file alias="appicon">icons/qterm.png</file>
+    </qresource>
+    <qresource prefix="/component">
+        <file alias="drop-down">../view/components/DropDown.qml</file>
+        <file alias="image-button">../view/components/ImageButton.qml</file>
+        <file alias="text-input">../view/components/TextInput.qml</file>
+    </qresource>
+    <qresource prefix="/composite">
+        <file alias="tool-bar">../view/composites/ToolBar.qml</file>
+        <file alias="text-view">../view/composites/TextView.qml</file>
+        <file alias="prompt">../view/composites/Prompt.qml</file>
+    </qresource>
+    <qresource prefix="/image">
+        <file alias="play">images/play-regular.svg</file>
+        <file alias="stop">images/stop-regular.svg</file>
+    </qresource>
+</RCC>
