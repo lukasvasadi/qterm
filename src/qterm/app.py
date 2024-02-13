@@ -55,8 +55,6 @@ class Worker(QObject):
 
 
 class StateMachine(QStateMachine):
-    stateChanged = Signal(str)
-
     def __init__(self, parent: QObject):
         super().__init__(parent=parent)
 
@@ -93,7 +91,6 @@ class Controller(QObject):
         self.timer.setInterval(1000)
         # noinspection PyUnresolvedReferences
         self.timer.timeout.connect(self.getModel)
-
         self.deviceClosed.connect(self.timer.start, Qt.QueuedConnection)
         self.deviceOpened.connect(self.timer.stop, Qt.QueuedConnection)
         self.timer.start()
@@ -172,10 +169,9 @@ class Controller(QObject):
                         self.thread.deleteLater, Qt.QueuedConnection
                     )
                     self.thread.started.connect(self.worker.run, Qt.QueuedConnection)
-                    self.deviceClosed.connect(self.device.close, Qt.QueuedConnection)
                     self.deviceClosed.connect(self.thread.quit, Qt.QueuedConnection)
                     self.deviceOpened.connect(self.thread.start)
-                    self.quitting.connect(self.device.close, Qt.QueuedConnection)
+                    self.quitting.connect(self.closeSerialDevice, Qt.QueuedConnection)
                     self.quitting.connect(self.thread.quit, Qt.QueuedConnection)
 
                     self.deviceOpened.emit()
@@ -186,6 +182,7 @@ class Controller(QObject):
     @Slot(result=None)
     def closeSerialDevice(self) -> None:
         if self.device.is_open:
+            self.device.close()
             self.deviceClosed.emit()
             self.statusChanged.emit("Serial comports detected")
 
