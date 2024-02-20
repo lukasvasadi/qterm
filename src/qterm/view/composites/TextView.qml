@@ -11,26 +11,7 @@ Item {
     property alias scrollView: scrollView
     property alias textArea: textArea
 
-    state: AppStates.states.Closed
-
-    states: [
-        State {
-            name: AppStates.states.Closed
-
-            PropertyChanges {
-                enabled: false
-                target: root
-            }
-        },
-        State {
-            name: AppStates.states.Opened
-
-            PropertyChanges {
-                enabled: true
-                target: root
-            }
-        }
-    ]
+    enabled: machine.hasOpenState
 
     ScrollView {
         id: scrollView
@@ -83,11 +64,7 @@ Item {
     }
     Connections {
         function onDeviceClosed(): void {
-            root.state = AppStates.states.Closed;
             textArea.clear();
-        }
-        function onDeviceOpened(): void {
-            root.state = AppStates.states.Opened;
         }
         function onFileDataProcessed(data: string): void {
             textArea.text += `<b>${data}</b>`;

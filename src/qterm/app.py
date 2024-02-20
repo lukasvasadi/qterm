@@ -55,13 +55,26 @@ class Worker(QObject):
 
 
 class StateMachine(QStateMachine):
+    stateChanged = Signal()
+
     def __init__(self, parent: QObject):
         super().__init__(parent=parent)
 
         self.closed = QState(parent=self)
         self.open = QState(parent=self)
 
+        self.closed.entered.connect(self.stateChanged, Qt.QueuedConnection)
+        self.open.entered.connect(self.stateChanged, Qt.QueuedConnection)
+
         self.setInitialState(self.closed)
+
+    @Property(bool, notify=stateChanged)
+    def hasClosedState(self) -> bool:
+        return self.closed in self.configuration()
+
+    @Property(bool, notify=stateChanged)
+    def hasOpenState(self) -> bool:
+        return self.open in self.configuration()
 
 
 class Controller(QObject):
@@ -88,7 +101,7 @@ class Controller(QObject):
 
         # Periodically inspect device comports
         self.timer = QTimer()
-        self.timer.setInterval(1000)
+        self.timer.setInterval(700)
         # noinspection PyUnresolvedReferences
         self.timer.timeout.connect(self.getModel)
         self.deviceClosed.connect(self.timer.start, Qt.QueuedConnection)
@@ -144,7 +157,7 @@ class Controller(QObject):
             file.open(QFile.ReadOnly)
             data = file.readAll()
             file.close()
-            self.device.write(data)
+            self.device.send(data)
             for line in data.data().decode("utf-8").split("\n"):
                 self.fileDataProcessed.emit(line)
 
@@ -170,7 +183,7 @@ class Controller(QObject):
                     )
                     self.thread.started.connect(self.worker.run, Qt.QueuedConnection)
                     self.deviceClosed.connect(self.thread.quit, Qt.QueuedConnection)
-                    self.deviceOpened.connect(self.thread.start)
+                    self.deviceOpened.connect(self.thread.start, Qt.QueuedConnection)
                     self.quitting.connect(self.closeSerialDevice, Qt.QueuedConnection)
                     self.quitting.connect(self.thread.quit, Qt.QueuedConnection)
 
@@ -211,6 +224,7 @@ def main() -> None:
     controller = Controller(parent=app)
 
     engine.rootContext().setContextProperty("controller", controller)
+    engine.rootContext().setContextProperty("machine", controller.machine)
     engine.load(VIEW_PATH / "main.qml")
 
     if not engine.rootObjects():

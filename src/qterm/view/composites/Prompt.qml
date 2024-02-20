@@ -9,27 +9,8 @@ Item {
 
     signal messageEntered(string message)
 
+    enabled: machine.hasOpenState
     height: 60
-    state: AppStates.states.Closed
-
-    states: [
-        State {
-            name: AppStates.states.Closed
-
-            PropertyChanges {
-                enabled: false
-                target: root
-            }
-        },
-        State {
-            name: AppStates.states.Opened
-
-            PropertyChanges {
-                enabled: true
-                target: root
-            }
-        }
-    ]
 
     TextInput {
         id: input
@@ -42,15 +23,5 @@ Item {
             messageEntered(text);
             clear();
         }
-    }
-    Connections {
-        function onDeviceClosed(): void {
-            root.state = AppStates.states.Closed;
-        }
-        function onDeviceOpened(): void {
-            root.state = AppStates.states.Opened;
-        }
-
-        target: controller
     }
 }
