@@ -1,4 +1,5 @@
 from serial import Serial
+from typing import Any
 
 
 class SerialDevice(Serial):
@@ -22,9 +23,12 @@ class SerialDevice(Serial):
         self.reset_input_buffer()
         self.reset_output_buffer()
 
-    def send(self, msg: str) -> None:
+    def send(self, msg: str | Any) -> None:
         """Send bytearray to device"""
-        self.write(f"{msg}{self.delimiter}".encode(self.encoding))
+        if isinstance(msg, str):
+            self.write(f"{msg}{self.delimiter}".encode(self.encoding))
+        else:
+            self.write(msg + self.delimiter.encode(self.encoding))
 
     def recv(self) -> str:
         """Receive bytearray from device"""
