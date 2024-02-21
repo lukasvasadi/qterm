@@ -7,7 +7,6 @@ import DropDown
 import TextInput
 import ImageButton
 import Style
-import "qrc:/appstates.js" as AppStates
 
 Item {
     id: root

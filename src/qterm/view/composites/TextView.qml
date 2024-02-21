@@ -3,7 +3,6 @@
 import QtQuick
 import QtQuick.Controls
 import Style
-import "qrc:/appstates.js" as AppStates
 
 Item {
     id: root

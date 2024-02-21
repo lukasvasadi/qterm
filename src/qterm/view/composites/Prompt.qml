@@ -2,7 +2,6 @@
 
 import QtQuick
 import TextInput
-import "qrc:/appstates.js" as AppStates
 
 Item {
     id: root
