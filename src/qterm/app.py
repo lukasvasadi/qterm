@@ -136,6 +136,7 @@ class Controller(QObject):
             f"{com.name}: {com.product} | {com.manufacturer}"
             for com in ports.comports()
             if "Bluetooth" not in com.device
+            and (com.product is not None and com.manufacturer is not None)
         ]
 
         if self.model != model:
